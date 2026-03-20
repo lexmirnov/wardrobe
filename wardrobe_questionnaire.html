@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Гардероб — анкета</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --warm-white: #FDFBF8; --cream: #F8F5F0; --ink: #1C1A18; --ink-muted: #6B6660;
+    --ink-light: #A8A39D; --border: #E0DAD3; --border-hover: #C8C0B8;
+    --accent: #8B7355; --serif: 'Cormorant Garamond', Georgia, serif; --sans: 'DM Sans', system-ui, sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--sans); background: var(--warm-white); color: var(--ink); font-size: 15px; line-height: 1.6; min-height: 100vh; }
+  .progress-bar { position: fixed; top: 0; left: 0; right: 0; height: 2px; background: var(--border); z-index: 100; }
+  .progress-fill { height: 100%; background: var(--accent); transition: width 0.4s ease; width: 0%; }
+  header { padding: 72px 0 48px; text-align: center; border-bottom: 0.5px solid var(--border); margin-bottom: 64px; }
+  header .eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 20px; }
+  header h1 { font-family: var(--serif); font-weight: 300; font-size: clamp(36px, 6vw, 52px); color: var(--ink); line-height: 1.1; margin-bottom: 16px; }
+  header p { font-size: 14px; color: var(--ink-muted); max-width: 420px; margin: 0 auto; }
+  .container { max-width: 640px; margin: 0 auto; padding: 0 24px 120px; }
+  .section { margin-bottom: 56px; }
+  .section-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 28px; }
+  .section-num { font-family: var(--serif); font-size: 13px; color: var(--ink-light); font-style: italic; min-width: 20px; }
+  .section-title { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-muted); }
+  .section-line { flex: 1; height: 0.5px; background: var(--border); }
+  .question { margin-bottom: 32px; }
+  .q-label { font-size: 15px; color: var(--ink); margin-bottom: 6px; line-height: 1.4; }
+  .q-hint { font-size: 12px; color: var(--ink-light); margin-bottom: 12px; line-height: 1.4; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { padding: 8px 16px; border: 0.5px solid var(--border); border-radius: 2px; font-size: 13px; cursor: pointer; background: var(--warm-white); color: var(--ink-muted); user-select: none; transition: all 0.15s; font-family: var(--sans); }
+  .chip:hover { border-color: var(--border-hover); color: var(--ink); }
+  .chip.sel { background: var(--ink); border-color: var(--ink); color: var(--warm-white); }
+  .scale-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .scale-chips { display: flex; gap: 6px; }
+  .scale-chips .chip { flex: 1; text-align: center; padding: 8px 4px; }
+  .scale-labels { display: flex; justify-content: space-between; }
+  .scale-label { font-size: 11px; color: var(--ink-light); }
+  textarea { width: 100%; padding: 12px 14px; border: 0.5px solid var(--border); border-radius: 2px; font-family: var(--sans); font-size: 14px; background: var(--warm-white); color: var(--ink); resize: vertical; outline: none; line-height: 1.6; transition: border-color 0.15s; }
+  textarea::placeholder { color: var(--ink-light); }
+  textarea:focus { border-color: var(--border-hover); }
+  .submit-section { padding-top: 48px; border-top: 0.5px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+  .submit-note { font-size: 12px; color: var(--ink-light); }
+  .submit-btn { padding: 14px 40px; background: var(--ink); color: var(--warm-white); border: none; border-radius: 2px; font-family: var(--sans); font-size: 13px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: opacity 0.15s; }
+  .submit-btn:hover { opacity: 0.82; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(28,26,24,0.65); z-index: 200; align-items: center; justify-content: center; padding: 24px; backdrop-filter: blur(4px); }
+  .overlay.show { display: flex; }
+  .share-card { background: var(--warm-white); border-radius: 4px; max-width: 480px; width: 100%; padding: 36px 32px; display: flex; flex-direction: column; gap: 20px; }
+  .share-card h2 { font-family: var(--serif); font-weight: 300; font-size: 28px; }
+  .share-card p { font-size: 14px; color: var(--ink-muted); line-height: 1.5; }
+  .share-url { background: var(--cream); border: 0.5px solid var(--border); border-radius: 2px; padding: 12px 14px; font-size: 12px; color: var(--ink-muted); word-break: break-all; font-family: monospace; line-height: 1.5; }
+  .share-actions { display: flex; gap: 10px; }
+  .copy-btn { flex: 1; padding: 12px 20px; background: var(--ink); color: var(--warm-white); border: none; border-radius: 2px; font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
+  .copy-btn:hover { opacity: 0.82; }
+  .copy-btn.copied { background: var(--accent); }
+  .close-link { font-size: 13px; color: var(--ink-light); text-align: center; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .results-page { display: none; }
+  .results-page.show { display: block; }
+  .form-page.hide { display: none; }
+  .results-header { padding: 72px 0 48px; text-align: center; border-bottom: 0.5px solid var(--border); margin-bottom: 64px; }
+  .results-header .eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+  .results-header h1 { font-family: var(--serif); font-weight: 300; font-size: clamp(32px, 5vw, 44px); color: var(--ink); line-height: 1.1; margin-bottom: 12px; }
+  .results-header p { font-size: 14px; color: var(--ink-muted); }
+  .results-copy-bar { background: var(--cream); border: 0.5px solid var(--border); border-radius: 2px; padding: 20px 24px; margin-bottom: 40px; display: flex; flex-direction: column; gap: 12px; }
+  .results-copy-bar p { font-size: 13px; color: var(--ink-muted); }
+  .results-copy-btn { align-self: flex-start; padding: 10px 24px; background: var(--ink); color: var(--warm-white); border: none; border-radius: 2px; font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
+  .results-copy-btn:hover { opacity: 0.82; }
+  .results-copy-btn.copied { background: var(--accent); }
+  .answer-group { margin-bottom: 40px; }
+  .answer-group-title { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-light); border-bottom: 0.5px solid var(--border); padding-bottom: 8px; margin-bottom: 16px; }
+  .answer-row { display: flex; gap: 16px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+  .answer-row:last-child { border-bottom: none; }
+  .answer-key { font-size: 13px; color: var(--ink-muted); min-width: 180px; flex-shrink: 0; }
+  .answer-val { font-size: 13px; color: var(--ink); }
+  .prompt-block { background: var(--cream); border: 0.5px solid var(--border); border-radius: 2px; padding: 24px; margin-top: 40px; }
+  .prompt-block pre { font-family: var(--sans); font-size: 13px; color: var(--ink); white-space: pre-wrap; line-height: 1.7; }
+  footer { text-align: center; padding: 0 0 40px; font-size: 11px; color: var(--ink-light); letter-spacing: 0.05em; }
+  @media (max-width: 480px) {
+    .container { padding: 0 16px 100px; }
+    header, .results-header { padding: 56px 0 36px; }
+    .chip { font-size: 12px; padding: 7px 12px; }
+    .answer-row { flex-direction: column; gap: 4px; }
+    .answer-key { min-width: unset; }
+    .share-card { padding: 28px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="form-page" id="form-page">
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  <header>
+    <div class="container">
+      <div class="eyebrow">Весна — лето 2026</div>
+      <h1>Твой новый гардероб</h1>
+      <p>Несколько вопросов, чтобы обновление было точным. Занимает около пяти минут.</p>
+    </div>
+  </header>
+  <div class="container">
+
+    <div class="section">
+      <div class="section-header"><span class="section-num">01</span><span class="section-title">Бюджет</span><div class="section-line"></div></div>
+      <div class="question">
+        <div class="q-label">Комфортный потолок на одну вещь</div>
+        <div class="q-hint">Сумма, за которой начинается «надо подумать»</div>
+        <div class="chips" data-key="Цена за вещь" data-multi="false">
+          <div class="chip" data-val="до 3 000 ₽">до 3 000 ₽</div>
+          <div class="chip" data-val="3–7 000 ₽">3–7 000 ₽</div>
+          <div class="chip" data-val="7–15 000 ₽">7–15 000 ₽</div>
+          <div class="chip" data-val="15–30 000 ₽">15–30 000 ₽</div>
+          <div class="chip" data-val="30–70 000 ₽">30–70 000 ₽</div>
+          <div class="chip" data-val="70 000+ ₽">70 000+ ₽</div>
+        </div>
+      </div>
+      <div class="question">
+        <div class="q-label">Общий бюджет на сезонное обновление</div>
+        <div class="chips" data-key="Общий бюджет" data-multi="false">
+          <div class="chip" data-val="до 20 000 ₽">до 20 000 ₽</div>
+          <div class="chip" data-val="20–50 000 ₽">20–50 000 ₽</div>
+          <div class="chip" data-val="50–100 000 ₽">50–100 000 ₽</div>
+          <div class="chip" data-val="100–200 000 ₽">100–200 000 ₽</div>
+          <div class="chip" data-val="200 000+ ₽">200 000+ ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header"><span class="section-num">02</span><span class="section-title">Жизнь и контекст</span><div class="section-line"></div></div>
+      <div class="question">
+        <div class="q-label">Работа — формат</div>
+        <div class="chips" data-key="Работа" data-multi="false">
+          <div class="chip" data-val="Не работаю">Не работаю</div>
+          <div class="chip" data-val="Удалёнка дома">Удалёнка дома</div>
+          <div class="chip" data-val="Офис 3–5 дней">Офис 3–5 дней</div>
+          <div class="chip" data-val="Встречи и переговоры">Встречи / переговоры</div>
+          <div class="chip" data-val="Свой бизнес">Свой бизнес</div>
+        </div>
+      </div>
+      <div class="question">
+        <div class="q-label">Что чаще всего делаешь в типичный весенний день?</div>
+        <div class="q-hint">Можно несколько</div>
+        <div class="chips" data-key="Типичный день" data-multi="true">
+          <div class="chip" data-val="Школа / сад с детьми">Школа / сад с детьми</div>
+          <div class="chip" data-val="Кафе / встречи">Кафе / встречи</div>
+          <div class="chip" data-val="ТЦ / магазины">ТЦ / магазины</div>
+          <div class="chip" data-val="Спорт / прогулки">Спорт / прогулки</div>
+          <div class="chip" data-val="Рестораны / вечера">Рестораны / вечера</div>
+          <div class="chip" data-val="Дача / природа">Дача / природа</div>
+          <div class="chip" data-val="Выставки / театр">Выставки / театр</div>
+          <div class="chip" data-val="Деловые встречи">Деловые встречи</div>
+        </div>
+      </div>
+      <div class="question">
+        <div class="q-label">Особые поводы этим летом?</div>
+        <div class="q-hint">Отпуск, свадьба, важное событие</div>
+        <textarea rows="2" placeholder="Например: поездка в Европу в июне, корпоратив в июле..." data-key="Особые поводы"></textarea>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header"><span class="section-num">03</span><span class="section-title">Текущий гардероб</span><div class="section-line"></div></div>
+      <div class="question">
+        <div class="q-label">Масштаб обновления</div>
+        <div class="chips" data-key="Масштаб" data-multi="false">
+          <div class="chip" data-val="Всё менять, чистый лист">Всё менять, чистый лист</div>
+          <div class="chip" data-val="Дополнить 5–10 вещами">Дополнить 5–10 вещами</div>
+          <div class="chip" data-val="Есть конкретные пробелы">Есть конкретные пробелы</div>
+          <div class="chip" data-val="Только верх или только низ">Только верх / только низ</div>
+        </div>
+      </div>
+      <div class="question">
+        <div class="q-label">Что останется из текущего гардероба?</div>
+        <div class="q-hint">Ключевые вещи и цвета — чтобы новое с ними работало</div>
+        <textarea rows="2" placeholder="Например: бежевый тренч, белые кроссовки, тёмно-синие джинсы..." data-key="Что остаётся"></textarea>
+      </div>
+      <div class="question">
+        <div class="q-label">Что точно не хочется больше носить?</div>
+        <div class="q-hint">Фасоны, цвета, принты, материалы — всё считается</div>
+        <textarea rows="2" placeholder="Например: надоели цветочные принты, мешковатые силуэты..." data-key="Что не хочется"></textarea>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header"><span class="section-num">04</span><span class="section-title">Тело и силуэт</span><div class="section-line"></div></div>
+      <div class="question">
+        <div class="q-label">Что хочется подчеркнуть?</div>
+        <div class="chips" data-key="Подчеркнуть" data-multi="true">
+          <div class="chip" data-val="Талия">Талия</div>
+          <div class="chip" data-val="Ноги">Ноги</div>
+          <div class="chip" data-val="Плечи">Плечи</div>
+          <div class="chip" data-val="Декольте">Декольте</div>
+          <div class="chip" data-val="Спина">Спина</div>
+          <div class="chip" data-val="Люблю свободный крой">Люблю свободный крой</div>
+        </div>
+      </div>
+      <div class="question">
+        <div class="q-label">Что не хочется акцентировать?</div>
+        <div class="chips" data-key="Не акцентировать" data-multi="true">
+          <div class="chip" data-val="Живот">Живот</div>
+          <div class="chip" data-val="Бёдра">Бёдра</div>
+          <div class="chip" data-val="Руки">Руки</div>
+          <div class="chip" data-val="Колени">Колени</div>
+          <div class="chip" data-val="Всё нравится">Всё нравится</div>
+        </div>
+      </div>
+      <div class="question">
+        <div class="q-label">Комфортная длина юбок и платьев</div>
+        <div class="chips" data-key="Длина" data-multi="true">
+          <div class="chip" data-val="Мини">Мини</div>
+          <div class="chip" data-val="На колено">На колено</div>
+          <div class="chip" data-val="Миди">Миди</div>
+          <div class="chip" data-val="Макси">Макси</div>
+          <div class="chip" data-val="Предпочитаю брюки">Предпочитаю брюки</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header"><span class="section-num">05</span><span class="section-title">Цвета и принты</span><div class="section-line"></div></div>
+      <div class="question">
+        <div class="q-label">Нейтралы — основа гардероба</div>
+        <div class="chips" data-key="Нейтралы" data-multi="true">
+          <div class="chip" data-val="Молочный / экрю">Молочный / экрю</div>
+          <div class="chip" data-val="Бежевый / кемел">Бежевый / кемел</div>
+          <div class="chip" data-val="Серый">Серый</div>
+          <div class="chip" data-val="Белый">Белый</div>
+          <div class="chip" data-val="Чёрный">Чёрный</div>
+          <div class="chip" data-val="Тёмно-синий">Тёмно-синий</div>
+          <div class="chip" data-val="Коричневый / шоколад">Коричневый</div>
+          <div class="chip" data-val="Хаки / оливковый">Хаки / олива</div>
+        </div>
+      </div>
+      <div class="question">
+        <div class="q-label">Акцентные цвета — готова добавить?</div>
+        <div class="chips" data-key="Акценты" data-multi="true">
+          <div class="chip" data-val="Терракота">Терракота</div>
+          <div class="chip" data-val="Пыльный розовый">Пыльный розовый</div>
+          <div class="chip" data-val="Голубой / небесный">Голубой</div>
+          <div class="chip" data-val="Бургундский">Бургундский</div>
+          <div class="chip" data-val="Шалфей / мятный">Шалфей</div>
+          <div class="chip" data-val="Горчичный">Горчичный</div>
+          <div class="chip" data-val="Только нейтралы">Только нейтралы</div>
+        </div>
+      </div>
+      <div class="question">
+        <div class="q-label">Принты</div>
+        <div class="chips" data-key="Принты" data-multi="true">
+          <div class="chip" data-val="Только однотон">Только однотон</div>
+          <div class="chip" data-val="Полоска">Полоска</div>
+          <div class="chip" data-val="Клетка">Клетка</div>
+          <div class="chip" data-val="Геометрия">Геометрия</div>
+          <div class="chip" data-val="Деликатная абстракция">Абстракция</div>
+          <div class="chip" data-val="Анималистика">Анималистика</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header"><span class="section-num">06</span><span class="section-title">Комфорт</span><div class="section-line"></div></div>
+      <div class="question">
+        <div class="q-label">Отношение к каблукам</div>
+        <div class="chips" data-key="Каблуки" data-multi="false">
+          <div class="chip" data-val="Только плоская подошва">Только плоская</div>
+          <div class="chip" data-val="Низкий каблук — окей">Низкий / блок — ок</div>
+          <div class="chip" data-val="До 7 см — норм">До 7 см — норм</div>
+          <div class="chip" data-val="Люблю высокий каблук">Люблю высокий</div>
+        </div>
+      </div>
+      <div class="question">
+        <div class="q-label">Ограничения по материалам</div>
+        <div class="chips" data-key="Материалы" data-multi="true">
+          <div class="chip" data-val="Синтетика — нет">Синтетика — нет</div>
+          <div class="chip" data-val="Шерсть — нет">Шерсть — нет</div>
+          <div class="chip" data-val="Лён — нет">Лён — нет</div>
+          <div class="chip" data-val="Шёлк / атлас — да">Шёлк / атлас — да</div>
+          <div class="chip" data-val="Ограничений нет">Ограничений нет</div>
+        </div>
+      </div>
+      <div class="question">
+        <div class="q-label">Уход — насколько готова к деликатному?</div>
+        <div class="chips" data-key="Уход" data-multi="false">
+          <div class="chip" data-val="Только машинная стирка">Только машинка</div>
+          <div class="chip" data-val="Ручная стирка — окей">Ручная — ок</div>
+          <div class="chip" data-val="Химчистка не проблема">Химчистка — ок</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header"><span class="section-num">07</span><span class="section-title">Где покупать</span><div class="section-line"></div></div>
+      <div class="question">
+        <div class="q-label">Где обычно покупаешь одежду?</div>
+        <div class="chips" data-key="Магазины" data-multi="true">
+          <div class="chip" data-val="Wildberries / Ozon">WB / Ozon</div>
+          <div class="chip" data-val="Lamoda">Lamoda</div>
+          <div class="chip" data-val="12 Storeez">12 Storeez</div>
+          <div class="chip" data-val="Gate31 / Calista">Gate31 / Calista</div>
+          <div class="chip" data-val="Брендовые шоурумы">Брендовые шоурумы</div>
+          <div class="chip" data-val="Карго из-за рубежа">Карго из-за рубежа</div>
+          <div class="chip" data-val="ASOS / Zara / Mango">ASOS / Zara</div>
+        </div>
+      </div>
+      <div class="question">
+        <div class="q-label">Готова заказывать из-за рубежа, если нужного нет в РФ?</div>
+        <div class="chips" data-key="Заграница" data-multi="false">
+          <div class="chip" data-val="Да, если это того стоит">Да, если стоит</div>
+          <div class="chip" data-val="Только как крайний вариант">Крайний вариант</div>
+          <div class="chip" data-val="Нет — только Россия">Нет — только РФ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header"><span class="section-num">08</span><span class="section-title">Ориентиры вкуса</span><div class="section-line"></div></div>
+      <div class="question">
+        <div class="q-label">Любимая вещь в текущем гардеробе — та, что всегда выручает</div>
+        <div class="q-hint">Лучший ориентир по стилю — опиши её</div>
+        <textarea rows="2" placeholder="Например: бежевый оверсайз блейзер — надеваю на всё..." data-key="Любимая вещь"></textarea>
+      </div>
+      <div class="question">
+        <div class="q-label">Образ, в котором «вот хочу так»</div>
+        <div class="q-hint">Реальная женщина, персонаж, бренд — необязательно, но очень помогает</div>
+        <textarea rows="2" placeholder="Имя, бренд, описание..." data-key="Ориентир"></textarea>
+      </div>
+      <div class="question">
+        <div class="q-label">Насколько хочется обновить образ?</div>
+        <div class="scale-wrap">
+          <div class="scale-chips" data-key="Желание перемен" data-multi="false">
+            <div class="chip" data-val="1">1</div>
+            <div class="chip" data-val="2">2</div>
+            <div class="chip" data-val="3">3</div>
+            <div class="chip" data-val="4">4</div>
+            <div class="chip" data-val="5">5</div>
+          </div>
+          <div class="scale-labels"><span class="scale-label">Всё как было</span><span class="scale-label">Хочу перемен</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header"><span class="section-num">09</span><span class="section-title">И последнее</span><div class="section-line"></div></div>
+      <div class="question">
+        <div class="q-label">Что ещё важно — всё, что не попало выше</div>
+        <div class="q-hint">Мысли, ощущения, что хочется чувствовать в новом гардеробе</div>
+        <textarea rows="3" placeholder="Любые слова..." data-key="Дополнительно"></textarea>
+      </div>
+    </div>
+
+    <div class="submit-section">
+      <p class="submit-note">Нажми — получишь ссылку для мужа</p>
+      <button class="submit-btn" onclick="buildShareLink()">Готово</button>
+    </div>
+  </div>
+  <footer><div class="container">Весна — лето 2026 · quiet luxury</div></footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="share-card">
+    <h2>Анкета заполнена</h2>
+    <p>Скопируй ссылку и отправь мужу — он откроет и увидит все ответы сразу.</p>
+    <div class="share-url" id="share-url-display"></div>
+    <div class="share-actions">
+      <button class="copy-btn" id="copy-btn" onclick="copyShareLink()">Скопировать ссылку</button>
+    </div>
+    <span class="close-link" onclick="closeOverlay()">Закрыть и вернуться к анкете</span>
+  </div>
+</div>
+
+<div class="results-page" id="results-page">
+  <div class="results-header">
+    <div class="container">
+      <div class="eyebrow">Результаты анкеты</div>
+      <h1>Гардероб Татьяны</h1>
+      <p>Весна — лето 2026 · quiet luxury · 168 см, 70 кг, р. обуви 39, возраст 39</p>
+    </div>
+  </div>
+  <div class="container">
+    <div class="results-copy-bar">
+      <p>Ниже — готовый текст для промпта. Скопируй одной кнопкой.</p>
+      <button class="results-copy-btn" id="results-copy-btn" onclick="copyPromptText()">Скопировать для промпта</button>
+    </div>
+    <div id="answers-display"></div>
+    <div class="prompt-block"><pre id="prompt-text"></pre></div>
+  </div>
+  <footer><div class="container">Весна — лето 2026 · quiet luxury</div></footer>
+</div>
+
+<script>
+const state = {};
+const REQUIRED = ['Цена за вещь','Общий бюджет','Работа','Типичный день','Масштаб','Нейтралы','Каблуки','Магазины','Желание перемен'];
+const SECTIONS = [
+  { title: 'Бюджет', keys: ['Цена за вещь','Общий бюджет'] },
+  { title: 'Жизнь и контекст', keys: ['Работа','Типичный день','Особые поводы'] },
+  { title: 'Текущий гардероб', keys: ['Масштаб','Что остаётся','Что не хочется'] },
+  { title: 'Тело и силуэт', keys: ['Подчеркнуть','Не акцентировать','Длина'] },
+  { title: 'Цвета и принты', keys: ['Нейтралы','Акценты','Принты'] },
+  { title: 'Комфорт', keys: ['Каблуки','Материалы','Уход'] },
+  { title: 'Где покупать', keys: ['Магазины','Заграница'] },
+  { title: 'Ориентиры вкуса', keys: ['Любимая вещь','Ориентир','Желание перемен'] },
+  { title: 'Дополнительно', keys: ['Дополнительно'] }
+];
+
+document.querySelectorAll('.chips, .scale-chips').forEach(group => {
+  const key = group.dataset.key;
+  const multi = group.dataset.multi === 'true';
+  group.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (!multi) {
+        group.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
+        chip.classList.toggle('sel');
+        state[key] = chip.classList.contains('sel') ? chip.dataset.val : null;
+      } else {
+        chip.classList.toggle('sel');
+        state[key] = [...group.querySelectorAll('.chip.sel')].map(c => c.dataset.val);
+      }
+      updateProgress();
+    });
+  });
+});
+
+document.querySelectorAll('textarea').forEach(el => {
+  el.addEventListener('input', () => {
+    if (el.dataset.key) { state[el.dataset.key] = el.value.trim(); updateProgress(); }
+  });
+});
+
+function updateProgress() {
+  const filled = REQUIRED.filter(k => {
+    const v = state[k];
+    if (!v) return false;
+    if (Array.isArray(v)) return v.length > 0;
+    return String(v).trim() !== '';
+  }).length;
+  document.getElementById('prog').style.width = Math.round(filled / REQUIRED.length * 100) + '%';
+}
+
+let shareLink = '';
+function buildShareLink() {
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+  shareLink = window.location.href.split('#')[0] + '#r=' + encoded;
+  document.getElementById('share-url-display').textContent = shareLink;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function copyShareLink() {
+  navigator.clipboard.writeText(shareLink).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Скопировано';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Скопировать ссылку'; btn.classList.remove('copied'); }, 2500);
+  });
+}
+
+function closeOverlay() { document.getElementById('overlay').classList.remove('show'); }
+document.getElementById('overlay').addEventListener('click', e => { if (e.target === document.getElementById('overlay')) closeOverlay(); });
+
+function getVal(v) {
+  if (!v) return null;
+  if (Array.isArray(v)) return v.length ? v.join(', ') : null;
+  return String(v).trim() || null;
+}
+
+function buildPromptText(data) {
+  const lines = [
+    'АНКЕТА: Татьяна Смирнова, 39 лет, 168 см, 70 кг, р. обуви 39',
+    'Сезон: весна–лето 2026 | Стиль: quiet luxury',
+    'Контекст: городская женщина, машина, муж, трое детей',
+    ''
+  ];
+  for (const sec of SECTIONS) {
+    const secLines = [];
+    for (const key of sec.keys) {
+      const v = getVal(data[key]);
+      if (v) secLines.push(key + ': ' + v);
+    }
+    if (secLines.length) { lines.push('[' + sec.title + ']'); lines.push(...secLines); lines.push(''); }
+  }
+  return lines.join('\n').trim();
+}
+
+function showResults(data) {
+  document.getElementById('form-page').classList.add('hide');
+  document.getElementById('results-page').classList.add('show');
+  const container = document.getElementById('answers-display');
+  container.innerHTML = '';
+  for (const sec of SECTIONS) {
+    const rows = sec.keys.map(key => {
+      const v = getVal(data[key]);
+      if (!v) return '';
+      return '<div class="answer-row"><span class="answer-key">' + key + '</span><span class="answer-val">' + v + '</span></div>';
+    }).filter(Boolean).join('');
+    if (!rows) continue;
+    container.innerHTML += '<div class="answer-group"><div class="answer-group-title">' + sec.title + '</div>' + rows + '</div>';
+  }
+  document.getElementById('prompt-text').textContent = buildPromptText(data);
+}
+
+function copyPromptText() {
+  navigator.clipboard.writeText(document.getElementById('prompt-text').textContent).then(() => {
+    const btn = document.getElementById('results-copy-btn');
+    btn.textContent = 'Скопировано';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Скопировать для промпта'; btn.classList.remove('copied'); }, 2500);
+  });
+}
+
+(function checkHash() {
+  const hash = window.location.hash;
+  if (hash && hash.startsWith('#r=')) {
+    try {
+      const data = JSON.parse(decodeURIComponent(escape(atob(hash.slice(3)))));
+      showResults(data);
+    } catch(e) { console.error('Hash parse error', e); }
+  }
+})();
+</script>
+</body>
+</html>
