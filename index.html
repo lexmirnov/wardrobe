@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Гардероб — анкета</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ww: #FDFBF8; --cr: #F8F5F0; --ink: #1C1A18; --im: #6B6660;
+    --il: #A8A39D; --bd: #E0DAD3; --bh: #C8C0B8; --ac: #8B7355;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--sans); background: var(--ww); color: var(--ink); font-size: 15px; line-height: 1.6; min-height: 100vh; }
+  .pb { position: fixed; top: 0; left: 0; right: 0; height: 2px; background: var(--bd); z-index: 100; }
+  .pf { height: 100%; background: var(--ac); transition: width 0.4s; width: 0%; }
+  header { padding: 72px 0 48px; text-align: center; border-bottom: 0.5px solid var(--bd); margin-bottom: 64px; }
+  .ey { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--il); margin-bottom: 20px; }
+  header h1 { font-family: var(--serif); font-weight: 300; font-size: clamp(36px, 6vw, 52px); color: var(--ink); line-height: 1.1; margin-bottom: 16px; }
+  header p { font-size: 14px; color: var(--im); max-width: 420px; margin: 0 auto; }
+  .ct { max-width: 640px; margin: 0 auto; padding: 0 24px 120px; }
+  .sec { margin-bottom: 56px; }
+  .sh { display: flex; align-items: baseline; gap: 16px; margin-bottom: 28px; }
+  .sn { font-family: var(--serif); font-size: 13px; color: var(--il); font-style: italic; min-width: 20px; }
+  .st { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--im); }
+  .sl { flex: 1; height: 0.5px; background: var(--bd); }
+  .q { margin-bottom: 32px; }
+  .ql { font-size: 15px; color: var(--ink); margin-bottom: 6px; line-height: 1.4; }
+  .qh { font-size: 12px; color: var(--il); margin-bottom: 12px; line-height: 1.4; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { padding: 8px 16px; border: 0.5px solid var(--bd); border-radius: 2px; font-size: 13px; cursor: pointer; background: var(--ww); color: var(--im); user-select: none; transition: all 0.15s; font-family: var(--sans); }
+  .chip:hover { border-color: var(--bh); color: var(--ink); }
+  .chip.sel { background: var(--ink); border-color: var(--ink); color: var(--ww); }
+  .sw { display: flex; flex-direction: column; gap: 8px; }
+  .sc { display: flex; gap: 6px; }
+  .sc .chip { flex: 1; text-align: center; padding: 8px 4px; }
+  .sl2 { display: flex; justify-content: space-between; }
+  .slb { font-size: 11px; color: var(--il); }
+  textarea, input[type=text], input[type=number] {
+    width: 100%; padding: 10px 14px; border: 0.5px solid var(--bd); border-radius: 2px;
+    font-family: var(--sans); font-size: 14px; background: var(--ww); color: var(--ink);
+    outline: none; line-height: 1.6; transition: border-color 0.15s;
+  }
+  textarea { resize: vertical; }
+  input[type=text]:focus, input[type=number]:focus, textarea:focus { border-color: var(--bh); }
+  ::placeholder { color: var(--il); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .fi { display: flex; flex-direction: column; gap: 6px; }
+  .fi label { font-size: 12px; color: var(--im); }
+  .sub { padding-top: 48px; border-top: 0.5px solid var(--bd); display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+  .subn { font-size: 12px; color: var(--il); }
+  .subb { padding: 14px 40px; background: var(--ink); color: var(--ww); border: none; border-radius: 2px; font-family: var(--sans); font-size: 13px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: opacity 0.15s; }
+  .subb:hover { opacity: 0.82; }
+
+  /* overlay */
+  .ov { display: none; position: fixed; inset: 0; background: rgba(28,26,24,0.7); z-index: 200; align-items: center; justify-content: center; padding: 24px; }
+  .ov.show { display: flex; }
+  .ovc { background: var(--ww); border-radius: 4px; max-width: 500px; width: 100%; padding: 36px 32px; display: flex; flex-direction: column; gap: 20px; }
+  .ovc h2 { font-family: var(--serif); font-weight: 300; font-size: 28px; }
+  .ovc .warn { font-size: 13px; color: var(--im); line-height: 1.5; }
+  .ovc .warn strong { color: var(--ink); font-weight: 500; }
+  .url-box { background: var(--cr); border: 1.5px solid var(--ac); border-radius: 2px; padding: 14px; font-size: 12px; color: var(--im); word-break: break-all; font-family: monospace; line-height: 1.6; cursor: text; user-select: all; }
+  .url-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ac); margin-bottom: 4px; }
+  .ov-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .obtn { flex: 1; min-width: 120px; padding: 12px 16px; border-radius: 2px; font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; border: none; text-align: center; }
+  .obtn-primary { background: var(--ink); color: var(--ww); }
+  .obtn-primary:hover { opacity: 0.82; }
+  .obtn-primary.done { background: var(--ac); }
+  .obtn-tg { background: #229ED9; color: #fff; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .obtn-tg:hover { opacity: 0.88; }
+  .cl { font-size: 13px; color: var(--il); text-align: center; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* results page */
+  .rp { display: none; }
+  .rp.show { display: block; }
+  .fp.hide { display: none; }
+  .rh { padding: 72px 0 48px; text-align: center; border-bottom: 0.5px solid var(--bd); margin-bottom: 64px; }
+  .rh .ey { color: var(--ac); }
+  .rh h1 { font-family: var(--serif); font-weight: 300; font-size: clamp(32px,5vw,44px); color: var(--ink); margin-bottom: 12px; }
+  .rh p { font-size: 14px; color: var(--im); }
+  .rcb { background: var(--cr); border: 0.5px solid var(--bd); border-radius: 2px; padding: 20px 24px; margin-bottom: 40px; display: flex; flex-direction: column; gap: 12px; }
+  .rcb p { font-size: 13px; color: var(--im); }
+  .rcbb { align-self: flex-start; padding: 10px 24px; background: var(--ink); color: var(--ww); border: none; border-radius: 2px; font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
+  .rcbb:hover { opacity: 0.82; }
+  .rcbb.done { background: var(--ac); }
+  .ag { margin-bottom: 40px; }
+  .agt { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--il); border-bottom: 0.5px solid var(--bd); padding-bottom: 8px; margin-bottom: 16px; }
+  .ar { display: flex; gap: 16px; padding: 10px 0; border-bottom: 0.5px solid var(--bd); }
+  .ar:last-child { border-bottom: none; }
+  .ak { font-size: 13px; color: var(--im); min-width: 180px; flex-shrink: 0; }
+  .av { font-size: 13px; color: var(--ink); }
+  .pb2 { background: var(--cr); border: 0.5px solid var(--bd); border-radius: 2px; padding: 24px; margin-top: 40px; }
+  .pb2 pre { font-family: var(--sans); font-size: 13px; color: var(--ink); white-space: pre-wrap; line-height: 1.7; }
+  footer { text-align: center; padding: 0 0 40px; font-size: 11px; color: var(--il); letter-spacing: 0.05em; }
+
+  @media(max-width:480px){
+    .ct{padding:0 16px 100px;}
+    header,.rh{padding:56px 0 36px;}
+    .chip{font-size:12px;padding:7px 12px;}
+    .ar{flex-direction:column;gap:4px;}
+    .ak{min-width:unset;}
+    .ovc{padding:28px 20px;}
+    .row2,.row3{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="fp" id="fp">
+  <div class="pb"><div class="pf" id="prog"></div></div>
+  <header>
+    <div class="ct">
+      <div class="ey">Обновление гардероба</div>
+      <h1>Твой новый стиль</h1>
+      <p>Несколько вопросов, чтобы рекомендации были точными. Около пяти минут.</p>
+    </div>
+  </header>
+  <div class="ct">
+
+    <!-- 00 личные данные -->
+    <div class="sec">
+      <div class="sh"><span class="sn">00</span><span class="st">О тебе</span><div class="sl"></div></div>
+      <div class="q">
+        <div class="ql">Как тебя зовут?</div>
+        <input type="text" placeholder="Имя" data-key="Имя">
+      </div>
+      <div class="q">
+        <div class="ql">Параметры</div>
+        <div class="row3">
+          <div class="fi"><label>Возраст</label><input type="number" placeholder="лет" min="16" max="80" data-key="Возраст"></div>
+          <div class="fi"><label>Рост, см</label><input type="number" placeholder="см" min="140" max="200" data-key="Рост"></div>
+          <div class="fi"><label>Вес, кг</label><input type="number" placeholder="кг" min="40" max="150" data-key="Вес"></div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Ещё немного</div>
+        <div class="row2">
+          <div class="fi"><label>Размер обуви</label><input type="number" placeholder="36–42" min="34" max="44" data-key="Обувь"></div>
+          <div class="fi"><label>Город</label><input type="text" placeholder="Москва, Питер…" data-key="Город"></div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Сезон обновления</div>
+        <div class="chips" data-key="Сезон" data-multi="false">
+          <div class="chip" data-val="Весна–лето 2026">Весна–лето 2026</div>
+          <div class="chip" data-val="Осень–зима 2026">Осень–зима 2026</div>
+          <div class="chip" data-val="Круглогодично">Круглогодично</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Базовый стиль</div>
+        <div class="qh">Выбери один — ближайший к тому, что хочется</div>
+        <div class="chips" data-key="Стиль" data-multi="false">
+          <div class="chip" data-val="Quiet luxury / old money">Quiet luxury</div>
+          <div class="chip" data-val="Casual chic / повседневная элегантность">Casual chic</div>
+          <div class="chip" data-val="Минимализм / капсульный гардероб">Минимализм</div>
+          <div class="chip" data-val="Романтика / женственность">Романтика</div>
+          <div class="chip" data-val="Boho / свободный стиль">Boho</div>
+          <div class="chip" data-val="Деловой / smart casual">Smart casual</div>
+          <div class="chip" data-val="Streetwear / городской">Streetwear</div>
+          <div class="chip" data-val="Не знаю — хочу разобраться">Не знаю ещё</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Контекст жизни</div>
+        <div class="qh">Расскажи кратко — это помогает больше всего</div>
+        <textarea rows="2" placeholder="Например: мама двоих детей, работаю в офисе, много встреч, иногда выезды за город..." data-key="Контекст жизни"></textarea>
+      </div>
+    </div>
+
+    <!-- 01 бюджет -->
+    <div class="sec">
+      <div class="sh"><span class="sn">01</span><span class="st">Бюджет</span><div class="sl"></div></div>
+      <div class="q">
+        <div class="ql">Комфортный потолок на одну вещь</div>
+        <div class="qh">Сумма, за которой начинается «надо подумать»</div>
+        <div class="chips" data-key="Цена за вещь" data-multi="false">
+          <div class="chip" data-val="до 3 000 ₽">до 3 000 ₽</div>
+          <div class="chip" data-val="3–7 000 ₽">3–7 000 ₽</div>
+          <div class="chip" data-val="7–15 000 ₽">7–15 000 ₽</div>
+          <div class="chip" data-val="15–30 000 ₽">15–30 000 ₽</div>
+          <div class="chip" data-val="30–70 000 ₽">30–70 000 ₽</div>
+          <div class="chip" data-val="70 000+ ₽">70 000+ ₽</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Общий бюджет на сезонное обновление</div>
+        <div class="chips" data-key="Общий бюджет" data-multi="false">
+          <div class="chip" data-val="до 20 000 ₽">до 20 000 ₽</div>
+          <div class="chip" data-val="20–50 000 ₽">20–50 000 ₽</div>
+          <div class="chip" data-val="50–100 000 ₽">50–100 000 ₽</div>
+          <div class="chip" data-val="100–200 000 ₽">100–200 000 ₽</div>
+          <div class="chip" data-val="200 000+ ₽">200 000+ ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 жизнь -->
+    <div class="sec">
+      <div class="sh"><span class="sn">02</span><span class="st">Жизнь и контекст</span><div class="sl"></div></div>
+      <div class="q">
+        <div class="ql">Работа — формат</div>
+        <div class="chips" data-key="Работа" data-multi="false">
+          <div class="chip" data-val="Не работаю">Не работаю</div>
+          <div class="chip" data-val="Удалёнка дома">Удалёнка дома</div>
+          <div class="chip" data-val="Офис 3–5 дней">Офис 3–5 дней</div>
+          <div class="chip" data-val="Встречи и переговоры">Встречи / переговоры</div>
+          <div class="chip" data-val="Свой бизнес">Свой бизнес</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Что чаще всего делаешь в типичный день?</div>
+        <div class="qh">Можно несколько</div>
+        <div class="chips" data-key="Типичный день" data-multi="true">
+          <div class="chip" data-val="Школа / сад с детьми">Школа / сад</div>
+          <div class="chip" data-val="Кафе / встречи">Кафе / встречи</div>
+          <div class="chip" data-val="ТЦ / магазины">ТЦ / магазины</div>
+          <div class="chip" data-val="Спорт / прогулки">Спорт / прогулки</div>
+          <div class="chip" data-val="Рестораны / вечера">Рестораны / вечера</div>
+          <div class="chip" data-val="Дача / природа">Дача / природа</div>
+          <div class="chip" data-val="Выставки / театр">Выставки / театр</div>
+          <div class="chip" data-val="Деловые встречи">Деловые встречи</div>
+          <div class="chip" data-val="Путешествия">Путешествия</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Особые поводы в ближайшие месяцы?</div>
+        <div class="qh">Отпуск, свадьба, важное событие — когда нужен конкретный образ</div>
+        <textarea rows="2" placeholder="Например: поездка в Италию в июне, корпоратив, свадьба подруги..." data-key="Особые поводы"></textarea>
+      </div>
+    </div>
+
+    <!-- 03 гардероб -->
+    <div class="sec">
+      <div class="sh"><span class="sn">03</span><span class="st">Текущий гардероб</span><div class="sl"></div></div>
+      <div class="q">
+        <div class="ql">Масштаб обновления</div>
+        <div class="chips" data-key="Масштаб" data-multi="false">
+          <div class="chip" data-val="Всё менять, чистый лист">Всё менять</div>
+          <div class="chip" data-val="Дополнить 5–10 вещами">Дополнить 5–10 вещами</div>
+          <div class="chip" data-val="Есть конкретные пробелы">Точечно: пробелы</div>
+          <div class="chip" data-val="Только верх или только низ">Только верх / низ</div>
+          <div class="chip" data-val="Только обувь и аксессуары">Обувь / аксессуары</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Что останется из текущего гардероба?</div>
+        <div class="qh">Ключевые вещи и цвета — чтобы новое с ними работало</div>
+        <textarea rows="2" placeholder="Например: бежевый тренч, белые кроссовки, тёмно-синие джинсы..." data-key="Что остаётся"></textarea>
+      </div>
+      <div class="q">
+        <div class="ql">Что точно не хочется больше носить?</div>
+        <div class="qh">Фасоны, цвета, принты, материалы — всё считается</div>
+        <textarea rows="2" placeholder="Например: надоели цветочные принты, мешковатые силуэты..." data-key="Что не хочется"></textarea>
+      </div>
+    </div>
+
+    <!-- 04 тело -->
+    <div class="sec">
+      <div class="sh"><span class="sn">04</span><span class="st">Тело и силуэт</span><div class="sl"></div></div>
+      <div class="q">
+        <div class="ql">Тип телосложения — как сама определяешь?</div>
+        <div class="chips" data-key="Телосложение" data-multi="false">
+          <div class="chip" data-val="Стройное / худощавое">Стройное</div>
+          <div class="chip" data-val="Спортивное / подтянутое">Спортивное</div>
+          <div class="chip" data-val="Женственное / округлое">Женственное</div>
+          <div class="chip" data-val="Верх шире низа (треугольник)">Верх шире низа</div>
+          <div class="chip" data-val="Низ шире верха (груша)">Низ шире верха</div>
+          <div class="chip" data-val="Пышные формы">Пышные формы</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Что хочется подчеркнуть?</div>
+        <div class="chips" data-key="Подчеркнуть" data-multi="true">
+          <div class="chip" data-val="Талия">Талия</div>
+          <div class="chip" data-val="Ноги">Ноги</div>
+          <div class="chip" data-val="Плечи">Плечи</div>
+          <div class="chip" data-val="Декольте">Декольте</div>
+          <div class="chip" data-val="Спина">Спина</div>
+          <div class="chip" data-val="Люблю свободный крой">Люблю свободу</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Что не хочется акцентировать?</div>
+        <div class="chips" data-key="Не акцентировать" data-multi="true">
+          <div class="chip" data-val="Живот">Живот</div>
+          <div class="chip" data-val="Бёдра">Бёдра</div>
+          <div class="chip" data-val="Руки">Руки</div>
+          <div class="chip" data-val="Колени">Колени</div>
+          <div class="chip" data-val="Бюст">Бюст</div>
+          <div class="chip" data-val="Всё нравится">Всё нравится</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Длина юбок и платьев</div>
+        <div class="chips" data-key="Длина" data-multi="true">
+          <div class="chip" data-val="Мини">Мини</div>
+          <div class="chip" data-val="На колено">На колено</div>
+          <div class="chip" data-val="Миди">Миди</div>
+          <div class="chip" data-val="Макси">Макси</div>
+          <div class="chip" data-val="Предпочитаю брюки">Предпочитаю брюки</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 05 цвета -->
+    <div class="sec">
+      <div class="sh"><span class="sn">05</span><span class="st">Цвета и принты</span><div class="sl"></div></div>
+      <div class="q">
+        <div class="ql">Цветотип кожи — если знаешь</div>
+        <div class="chips" data-key="Цветотип" data-multi="false">
+          <div class="chip" data-val="Зима (контрастный, холодный)">Зима</div>
+          <div class="chip" data-val="Лето (мягкий, холодный)">Лето</div>
+          <div class="chip" data-val="Осень (тёплый, насыщенный)">Осень</div>
+          <div class="chip" data-val="Весна (тёплый, светлый)">Весна</div>
+          <div class="chip" data-val="Не знаю">Не знаю</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Нейтралы — основа гардероба</div>
+        <div class="chips" data-key="Нейтралы" data-multi="true">
+          <div class="chip" data-val="Молочный / экрю">Молочный / экрю</div>
+          <div class="chip" data-val="Бежевый / кемел">Бежевый / кемел</div>
+          <div class="chip" data-val="Серый">Серый</div>
+          <div class="chip" data-val="Белый">Белый</div>
+          <div class="chip" data-val="Чёрный">Чёрный</div>
+          <div class="chip" data-val="Тёмно-синий">Тёмно-синий</div>
+          <div class="chip" data-val="Коричневый / шоколад">Коричневый</div>
+          <div class="chip" data-val="Хаки / оливковый">Хаки / олива</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Акцентные цвета — готова добавить?</div>
+        <div class="chips" data-key="Акценты" data-multi="true">
+          <div class="chip" data-val="Терракота">Терракота</div>
+          <div class="chip" data-val="Пыльный розовый">Пыльный розовый</div>
+          <div class="chip" data-val="Голубой / небесный">Голубой</div>
+          <div class="chip" data-val="Бургундский">Бургундский</div>
+          <div class="chip" data-val="Шалфей / мятный">Шалфей</div>
+          <div class="chip" data-val="Горчичный">Горчичный</div>
+          <div class="chip" data-val="Фуксия / яркий розовый">Фуксия</div>
+          <div class="chip" data-val="Только нейтралы">Только нейтралы</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Принты</div>
+        <div class="chips" data-key="Принты" data-multi="true">
+          <div class="chip" data-val="Только однотон">Только однотон</div>
+          <div class="chip" data-val="Полоска">Полоска</div>
+          <div class="chip" data-val="Клетка">Клетка</div>
+          <div class="chip" data-val="Геометрия">Геометрия</div>
+          <div class="chip" data-val="Цветочный принт">Цветочный</div>
+          <div class="chip" data-val="Деликатная абстракция">Абстракция</div>
+          <div class="chip" data-val="Анималистика">Анималистика</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 06 комфорт -->
+    <div class="sec">
+      <div class="sh"><span class="sn">06</span><span class="st">Комфорт</span><div class="sl"></div></div>
+      <div class="q">
+        <div class="ql">Отношение к каблукам</div>
+        <div class="chips" data-key="Каблуки" data-multi="false">
+          <div class="chip" data-val="Только плоская подошва">Только плоская</div>
+          <div class="chip" data-val="Низкий / блочный каблук — окей">Низкий / блок</div>
+          <div class="chip" data-val="До 7 см — норм">До 7 см</div>
+          <div class="chip" data-val="Люблю высокий каблук">Высокий — да</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Ограничения по материалам</div>
+        <div class="chips" data-key="Материалы" data-multi="true">
+          <div class="chip" data-val="Синтетика — нет">Синтетика — нет</div>
+          <div class="chip" data-val="Шерсть раздражает кожу">Шерсть — нет</div>
+          <div class="chip" data-val="Лён мнётся — не хочу">Лён — нет</div>
+          <div class="chip" data-val="Шёлк / атлас / ацетат — да">Шёлк / атлас — да</div>
+          <div class="chip" data-val="Ограничений нет">Ограничений нет</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Уход — насколько готова к деликатному?</div>
+        <div class="chips" data-key="Уход" data-multi="false">
+          <div class="chip" data-val="Только машинная стирка">Только машинка</div>
+          <div class="chip" data-val="Ручная стирка — окей">Ручная — ок</div>
+          <div class="chip" data-val="Химчистка не проблема">Химчистка — ок</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 07 магазины -->
+    <div class="sec">
+      <div class="sh"><span class="sn">07</span><span class="st">Где покупать</span><div class="sl"></div></div>
+      <div class="q">
+        <div class="ql">Где обычно покупаешь одежду?</div>
+        <div class="chips" data-key="Магазины" data-multi="true">
+          <div class="chip" data-val="Wildberries / Ozon">WB / Ozon</div>
+          <div class="chip" data-val="Lamoda">Lamoda</div>
+          <div class="chip" data-val="12 Storeez">12 Storeez</div>
+          <div class="chip" data-val="Gate31 / Calista">Gate31 / Calista</div>
+          <div class="chip" data-val="Брендовые шоурумы">Шоурумы</div>
+          <div class="chip" data-val="Карго из-за рубежа">Карго</div>
+          <div class="chip" data-val="ASOS / Zara / Mango">ASOS / Zara</div>
+          <div class="chip" data-val="Секонд-хенд / винтаж">Секонд / винтаж</div>
+        </div>
+      </div>
+      <div class="q">
+        <div class="ql">Готова заказывать из-за рубежа, если нужного нет в РФ?</div>
+        <div class="chips" data-key="Заграница" data-multi="false">
+          <div class="chip" data-val="Да, если это того стоит">Да, если стоит</div>
+          <div class="chip" data-val="Только как крайний вариант">Крайний вариант</div>
+          <div class="chip" data-val="Нет — только Россия">Нет — только РФ</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 08 ориентиры -->
+    <div class="sec">
+      <div class="sh"><span class="sn">08</span><span class="st">Ориентиры вкуса</span><div class="sl"></div></div>
+      <div class="q">
+        <div class="ql">Любимая вещь в текущем гардеробе</div>
+        <div class="qh">Та, что всегда выручает — лучший ориентир по стилю</div>
+        <textarea rows="2" placeholder="Например: бежевый оверсайз блейзер — надеваю на всё..." data-key="Любимая вещь"></textarea>
+      </div>
+      <div class="q">
+        <div class="ql">Образ, в котором «вот хочу так»</div>
+        <div class="qh">Реальная женщина, персонаж, бренд, инстаграм-аккаунт — необязательно, но очень помогает</div>
+        <textarea rows="2" placeholder="Имя, бренд, описание..." data-key="Ориентир"></textarea>
+      </div>
+      <div class="q">
+        <div class="ql">Насколько хочется обновить образ?</div>
+        <div class="sw">
+          <div class="sc" data-key="Желание перемен" data-multi="false">
+            <div class="chip" data-val="1">1</div>
+            <div class="chip" data-val="2">2</div>
+            <div class="chip" data-val="3">3</div>
+            <div class="chip" data-val="4">4</div>
+            <div class="chip" data-val="5">5</div>
+          </div>
+          <div class="sl2"><span class="slb">Всё как было</span><span class="slb">Хочу перемен</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 09 финал -->
+    <div class="sec">
+      <div class="sh"><span class="sn">09</span><span class="st">И последнее</span><div class="sl"></div></div>
+      <div class="q">
+        <div class="ql">Что ещё важно — всё, что не попало выше</div>
+        <div class="qh">Мысли, ощущения, что хочется чувствовать в новом гардеробе</div>
+        <textarea rows="3" placeholder="Любые слова..." data-key="Дополнительно"></textarea>
+      </div>
+    </div>
+
+    <div class="sub">
+      <p class="subn">Нажми — получишь ссылку для отправки</p>
+      <button class="subb" onclick="buildShareLink()">Готово</button>
+    </div>
+  </div>
+  <footer><div class="ct">Обновление гардероба · стилист-ассистент</div></footer>
+</div>
+
+<!-- OVERLAY -->
+<div class="ov" id="ov">
+  <div class="ovc">
+    <h2>Анкета заполнена</h2>
+    <p class="warn">Нажми кнопку ниже — ссылка скопируется. Затем <strong>вставь её в сообщение</strong> и отправь. Не копируй весь текст страницы, только ссылку.</p>
+    <div>
+      <div class="url-label">Твоя ссылка</div>
+      <div class="url-box" id="url-box" onclick="selectUrl()"></div>
+    </div>
+    <div class="ov-btns">
+      <button class="obtn obtn-primary" id="copy-btn" onclick="copyUrl()">Скопировать ссылку</button>
+      <a class="obtn obtn-tg" id="tg-btn" href="#" onclick="openTg(event)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.94 8.19l-2.02 9.52c-.15.67-.54.84-1.09.52l-3-2.21-1.45 1.39c-.16.16-.3.3-.61.3l.21-3.03 5.52-4.99c.24-.21-.05-.33-.37-.12L7.09 13.98 4.15 13.1c-.64-.2-.65-.64.13-.95l11.61-4.48c.53-.19 1 .13.05 4.52z" fill="white"/></svg>
+        Отправить в Telegram
+      </a>
+    </div>
+    <span class="cl" onclick="closeOv()">Закрыть</span>
+  </div>
+</div>
+
+<!-- RESULTS PAGE -->
+<div class="rp" id="rp">
+  <div class="rh">
+    <div class="ct">
+      <div class="ey">Результаты анкеты</div>
+      <h1 id="r-name">Гардероб</h1>
+      <p id="r-sub">Обновление · стилист-ассистент</p>
+    </div>
+  </div>
+  <div class="ct">
+    <div class="rcb">
+      <p>Ниже — готовый текст для промпта. Скопируй одной кнопкой и вставь в Claude Research.</p>
+      <button class="rcbb" id="rcbb" onclick="copyPrompt()">Скопировать для промпта</button>
+    </div>
+    <div id="ad"></div>
+    <div class="pb2"><pre id="pt"></pre></div>
+  </div>
+  <footer><div class="ct">Обновление гардероба · стилист-ассистент</div></footer>
+</div>
+
+<script>
+const S = {};
+const REQ = ['Цена за вещь','Общий бюджет','Работа','Типичный день','Масштаб','Нейтралы','Каблуки','Магазины','Стиль','Сезон'];
+const SECS = [
+  {t:'О человеке', k:['Имя','Возраст','Рост','Вес','Обувь','Город','Сезон','Стиль','Контекст жизни']},
+  {t:'Бюджет', k:['Цена за вещь','Общий бюджет']},
+  {t:'Жизнь', k:['Работа','Типичный день','Особые поводы']},
+  {t:'Гардероб', k:['Масштаб','Что остаётся','Что не хочется']},
+  {t:'Тело', k:['Телосложение','Подчеркнуть','Не акцентировать','Длина']},
+  {t:'Цвета', k:['Цветотип','Нейтралы','Акценты','Принты']},
+  {t:'Комфорт', k:['Каблуки','Материалы','Уход']},
+  {t:'Магазины', k:['Магазины','Заграница']},
+  {t:'Ориентиры', k:['Любимая вещь','Ориентир','Желание перемен']},
+  {t:'Дополнительно', k:['Дополнительно']}
+];
+
+document.querySelectorAll('.chips, .sc').forEach(g => {
+  const key = g.dataset.key, multi = g.dataset.multi === 'true';
+  g.querySelectorAll('.chip').forEach(c => {
+    c.addEventListener('click', () => {
+      if (!multi) {
+        g.querySelectorAll('.chip').forEach(x => x.classList.remove('sel'));
+        c.classList.toggle('sel');
+        S[key] = c.classList.contains('sel') ? c.dataset.val : null;
+      } else {
+        c.classList.toggle('sel');
+        S[key] = [...g.querySelectorAll('.chip.sel')].map(x => x.dataset.val);
+      }
+      upd();
+    });
+  });
+});
+
+document.querySelectorAll('textarea, input[type=text], input[type=number]').forEach(el => {
+  el.addEventListener('input', () => { if (el.dataset.key) { S[el.dataset.key] = el.value.trim(); upd(); } });
+});
+
+function upd() {
+  const f = REQ.filter(k => { const v = S[k]; if (!v) return false; if (Array.isArray(v)) return v.length > 0; return String(v).trim() !== ''; }).length;
+  document.getElementById('prog').style.width = Math.round(f / REQ.length * 100) + '%';
+}
+
+let _url = '';
+function buildShareLink() {
+  // FIX 1: sanitize control characters before encoding
+  const clean = JSON.stringify(S).replace(/[\x00-\x1F\x7F]/g, ' ');
+  const encoded = btoa(unescape(encodeURIComponent(clean)));
+  _url = location.href.split('#')[0] + '#r=' + encoded;
+  document.getElementById('url-box').textContent = _url;
+  document.getElementById('tg-btn').href = 'https://t.me/share/url?url=' + encodeURIComponent(_url);
+  document.getElementById('ov').classList.add('show');
+}
+
+function selectUrl() {
+  const el = document.getElementById('url-box');
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+
+function copyUrl() {
+  navigator.clipboard.writeText(_url).then(() => {
+    const b = document.getElementById('copy-btn');
+    b.textContent = 'Скопировано';
+    b.classList.add('done');
+    setTimeout(() => { b.textContent = 'Скопировать ссылку'; b.classList.remove('done'); }, 2500);
+  });
+}
+
+function openTg(e) {
+  e.preventDefault();
+  window.open('https://t.me/share/url?url=' + encodeURIComponent(_url), '_blank');
+}
+
+function closeOv() { document.getElementById('ov').classList.remove('show'); }
+document.getElementById('ov').addEventListener('click', e => { if (e.target === document.getElementById('ov')) closeOv(); });
+
+function gv(v) {
+  if (!v) return null;
+  if (Array.isArray(v)) return v.length ? v.join(', ') : null;
+  return String(v).trim() || null;
+}
+
+function buildPrompt(d) {
+  const name = gv(d['Имя']) || 'Клиентка';
+  const age = gv(d['Возраст']), h = gv(d['Рост']), w = gv(d['Вес']), shoe = gv(d['Обувь']), city = gv(d['Город']);
+  const params = [age && age+' лет', h && h+' см', w && w+' кг', shoe && 'р. обуви '+shoe].filter(Boolean).join(', ');
+  const style = gv(d['Стиль']) || 'quiet luxury';
+  const season = gv(d['Сезон']) || 'весна–лето 2026';
+  const ctx = gv(d['Контекст жизни']) || '';
+  const perChange = gv(d['Желание перемен']);
+
+  const lines = [
+    'Ты — стилист-исследователь. Составь практическое руководство по обновлению гардероба для конкретного человека.',
+    '',
+    '━━━ ДАННЫЕ О ЧЕЛОВЕКЕ ━━━',
+    '',
+    name + (params ? ', ' + params : '') + (city ? ', ' + city : '') + '.',
+    'Стиль: ' + style + '.',
+    'Сезон: ' + season + '.',
+    ctx ? 'Контекст: ' + ctx : '',
+    perChange ? 'Желание перемен (1–5): ' + perChange + (perChange >= 4 ? ' — хочет заметных изменений в рамках своего стиля' : ' — обновление без кардинальных перемен') : '',
+    '',
+  ].filter(v => v !== undefined);
+
+  const skipInPrompt = new Set(['Имя','Возраст','Рост','Вес','Обувь','Город','Стиль','Сезон','Контекст жизни','Желание перемен']);
+  for (const sec of SECS) {
+    if (sec.t === 'О человеке') continue;
+    const sl = [];
+    for (const k of sec.k) {
+      if (skipInPrompt.has(k)) continue;
+      const v = gv(d[k]);
+      if (v) sl.push(k + ': ' + v);
+    }
+    if (sl.length) { lines.push('[' + sec.t + ']'); lines.push(...sl); lines.push(''); }
+  }
+
+  lines.push(
+    '━━━ ЗАДАЧА ━━━',
+    '',
+    'ЭТАП 1 — АКТУАЛЬНЫЕ ТРЕНДЫ',
+    'Исследуй тренды ' + season + ' в направлении «' + style + '». Источники: Vogue, Harper\'s Bazaar, ELLE, подиумные обзоры. Для каждого из 5–7 трендов:',
+    '— описание: силуэт, цвета, ключевые вещи',
+    '— подходит ли этому человеку с учётом параметров тела, палитры и задач',
+    '— совместимость с тем, что остаётся в гардеробе',
+    'Отдельно — тренды, которые НЕ подходят, с объяснением.',
+    '',
+    'ЭТАП 2 — РОССИЙСКИЙ РЫНОК',
+    'Для каждого релевантного тренда ищи конкретные вещи: wildberries.ru, ozon.ru, lamoda.ru, 12storeez.com, gate31.ru, befree.ru, calista.ru.',
+    'Для каждой найденной вещи: название / магазин / цена / почему подходит / ссылка.',
+    'Если найти не удаётся — точная инструкция для ручного поиска (ключевые слова, фильтры, на что смотреть).',
+    gv(d['Особые поводы']) ? 'Отдельный блок: вещи под особые поводы (' + gv(d['Особые поводы']) + ').' : '',
+    '',
+    'ЭТАП 3 — ИТОГОВАЯ КАПСУЛА',
+    '8–10 новых вещей, которые:',
+    gv(d['Что остаётся']) ? '— сочетаются с якорями гардероба: ' + gv(d['Что остаётся']) : '',
+    '— закрывают все выявленные контексты жизни',
+    gv(d['Общий бюджет']) ? '— укладываются в бюджет: ' + gv(d['Общий бюджет']) + ' суммарно' : '',
+    '— соответствуют трендам ' + season + ' и стилю «' + style + '»',
+    '',
+    '━━━ ФОРМАТ ━━━',
+    '',
+    '1. Тренды — что актуально и почему подходит',
+    '2. Что не подходит (и почему)',
+    '3. Находки в российских магазинах (название / магазин / цена / почему / ссылка)',
+    '4. Что искать вручную (ключевые слова и инструкции)',
+    gv(d['Особые поводы']) ? '5. Блок для особых поводов' : '',
+    (gv(d['Особые поводы']) ? '6' : '5') + '. Итоговая капсула (вещь / где / цена / с чем носить / какой контекст закрывает)',
+    '',
+    'Пиши по-русски. Только конкретные вещи и действия. Никаких общих слов о стиле — только то, что можно купить или найти прямо сейчас.',
+  ).filter(v => v !== undefined && v !== '');
+
+  return lines.join('\n');
+}
+
+function showResults(d) {
+  document.getElementById('fp').classList.add('hide');
+  document.getElementById('rp').classList.add('show');
+  const name = gv(d['Имя']) || 'Гардероб';
+  document.getElementById('r-name').textContent = name;
+  const sub = [gv(d['Сезон']), gv(d['Стиль'])].filter(Boolean).join(' · ');
+  document.getElementById('r-sub').textContent = sub || 'Обновление гардероба';
+
+  const ad = document.getElementById('ad');
+  ad.innerHTML = '';
+  for (const sec of SECS) {
+    const rows = sec.k.map(k => {
+      const v = gv(d[k]);
+      if (!v) return '';
+      return '<div class="ar"><span class="ak">'+k+'</span><span class="av">'+v+'</span></div>';
+    }).filter(Boolean).join('');
+    if (!rows) continue;
+    ad.innerHTML += '<div class="ag"><div class="agt">'+sec.t+'</div>'+rows+'</div>';
+  }
+  document.getElementById('pt').textContent = buildPrompt(d);
+}
+
+function copyPrompt() {
+  navigator.clipboard.writeText(document.getElementById('pt').textContent).then(() => {
+    const b = document.getElementById('rcbb');
+    b.textContent = 'Скопировано';
+    b.classList.add('done');
+    setTimeout(() => { b.textContent = 'Скопировать для промпта'; b.classList.remove('done'); }, 2500);
+  });
+}
+
+// FIX 2: same sanitization on decode path (defensive)
+(function init() {
+  const h = location.hash;
+  if (h && h.startsWith('#r=')) {
+    try {
+      const raw = atob(h.slice(3));
+      const str = decodeURIComponent(escape(raw)).replace(/[\x00-\x1F\x7F]/g, ' ');
+      showResults(JSON.parse(str));
+    } catch(e) { console.error('Hash error', e); }
+  }
+})();
+</script>
+</body>
+</html>
